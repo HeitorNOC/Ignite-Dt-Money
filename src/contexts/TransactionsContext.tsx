@@ -1,4 +1,4 @@
-import { ReactNode, useEffect, useState } from "react";
+import { ReactNode, useEffect, useState, useCallback } from "react";
 import { createContext } from "use-context-selector";
 import { api } from "../lib/axios";
 
@@ -45,7 +45,7 @@ export function TransactionsProvider({ children }: TransactionsProviderProps) {
     setTransactions(response.data)
   }
 
-  async function createTransaction(data: CreateTransactionInput) {
+  const createTransaction = useCallback(async (data: CreateTransactionInput) => {
     const { description, price, category, type } = data
 
     const response = await api.post('transactions', {
@@ -57,10 +57,12 @@ export function TransactionsProvider({ children }: TransactionsProviderProps) {
     })
 
     setTransactions(state => [...state, response.data])
-  }
+  }, 
+  [],
+  )
 
   useEffect(() => {
-    
+
     fetchTransactions()
   }, []);
 
